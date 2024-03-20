@@ -58,7 +58,8 @@ python Server.py
 
 
 # Contributing
-If you'd like to contribute to this project, please [describe how users can contribute or link to CONTRIBUTING.md file if present].
+If you'd like to contribute to this project, please go to [Contribution Guidelines](CONTRIBUTING.md)
+.
 
 # License
-This project is licensed under the [License Name] - see the LICENSE.md file for details.
+This project is licensed under the [License of Sebasty](LICENSE.md) - see the LICENSE.md file for details.
