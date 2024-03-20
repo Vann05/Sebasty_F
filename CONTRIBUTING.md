@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-We welcome contributions to the [Project Name] project! Whether it's reporting a bug, fixing a typo, or adding new features, we appreciate your help.
+We welcome contributions to the Sebasty project! Whether it's reporting a bug, fixing a typo, or adding new features, we appreciate your help.
 
 ## Bug Reports and Feature Requests
 
