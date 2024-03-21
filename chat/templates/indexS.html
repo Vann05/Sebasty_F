@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBottttt</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">ChatBottttt</h1>
+        <div class="card mt-3">
+            <div class="card-body" id="chat-box">
+                <!-- Chat messages will be displayed here -->
+            </div>
+            <div class="card-footer">
+                <input type="text" id="user-input" class="form-control" placeholder="Type your message...">
+                <button class="btn btn-primary mt-3" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        function sendMessage() {
+            var userInput = $('#user-input').val();
+            $('#chat-box').append('<p>You: ' + userInput + '</p>');
+        
+            $.ajax({
+                type: 'POST',
+                url: '/chat',
+                data: {'user_input': userInput},
+                success: function(response) {
+                    $('#chat-box').append('<p>ChatBot: ' + response.bot_response + '</p>');
+                }
+            });
+        
+            $('#user-input').val('');
+        }
+    </script>
+</body>
+</html>
