@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func,text
 import base64
 import cv2
+import json
+import os
 
 app = Flask(__name__)
 
@@ -45,6 +47,31 @@ class Administration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     image = db.Column(db.LargeBinary, nullable=False)
+
+def load_responses():
+    if os.path.exists('responses.json'):
+        with open('responses.json', 'r') as file:
+            return json.load(file)
+    return {}
+
+def save_responses(responses):
+    with open('responses.json', 'w') as file:
+        json.dump(responses, file, indent=4)
+
+def load_unknown_questions():
+    if os.path.exists('unknown_questions.json'):
+        with open('unknown_questions.json', 'r') as file:
+            return json.load(file)
+    return []
+
+def save_unknown_questions(unknown_questions):
+    with open('unknown_questions.json', 'w') as file:
+        json.dump(unknown_questions, file, indent=4)
+
+def store_unknown_question(question):
+    unknown_questions = load_unknown_questions()
+    unknown_questions.append(question)
+    save_unknown_questions(unknown_questions)
 
 
 # For Camera Settings
@@ -117,7 +144,8 @@ def admin():
     surveys = Survey1.query.all()
     conn.close()
 
-    return render_template('Admin.html', surveys=surveys, average_ratings=average_ratings, overall_srating=overall_srating)
+    unknown_questions = load_unknown_questions()
+    return render_template('Admin.html', surveys=surveys, average_ratings=average_ratings, overall_srating=overall_srating, unknown_questions=unknown_questions)
   
   
 # Admin Form-Post
@@ -295,6 +323,40 @@ def formsurvey():
 def SebastyUI():
     return render_template('Sebastyui.html')
   
+
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.form['user_input'].lower()
+    responses = load_responses()
+    bot_response = ''
+
+    if user_input == 'quit':
+        bot_response = "Goodbye!"
+    elif user_input in responses:
+        bot_response = responses[user_input]
+    else:
+        # Store unknown question to a JSON file
+        store_unknown_question(user_input)
+        bot_response = "Sorry, I don't know the answer to that question."
+
+    return jsonify({'bot_response': bot_response})
+
+@app.route('/answer', methods=['POST'])
+def answer():
+    question = request.form['question']
+    answer = request.form['answer']
+    
+    responses = load_responses()
+    responses[question.lower()] = answer
+    save_responses(responses)
+    
+    unknown_questions = load_unknown_questions()
+    unknown_questions.remove(question)  # Remove answered question from unknown_questions
+    save_unknown_questions(unknown_questions)
+    
+    return redirect(url_for('admin'))
+
   
 if __name__ == '__main__':
     with app.app_context():
