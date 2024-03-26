@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        } 
+        .question {
+            margin-bottom: 10px;
+        }
+        .question textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
+        .answer textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
+        .submit-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Answer Unknown Questions</h2>
+    <form action="/answer" method="post">
+        {% for question in unknown_questions %}
+        <div class="question">
+            <label for="question">{{ question }}</label><br>
+            <textarea name="question" readonly>{{ question }}</textarea><br>
+            <textarea name="answer" placeholder="Enter your answer here..."></textarea>
+            <input type="submit" value="Submit" class="submit-btn">
+        </div>
+        {% endfor %}
+    </form>
+</body>
+</html>

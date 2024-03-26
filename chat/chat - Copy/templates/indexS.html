@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <style>
+        :root {
+            --red: #8a0000;
+            --lred: #8a0000b0;
+            --black: #000000;
+            --brown: #ded7c4;
+            --white: #ffffff;
+            --cream: #ede9df;
+            --bgcolor: #00000066;
+            --yellow: #ffbd13;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .chat-container {
+            width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 5px solid var(--lred);
+            border-radius: 8px;
+            height: 400px; /* Set a fixed height for the container */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background-color: var(--cream);
+        }
+
+        .chat-message-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .user-message {
+            background-color: var(--lred);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-form {
+            width: 700px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            background: var(--brown);
+            border-radius: 40px;
+            padding: 11.25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            position: relative; /* Ensure relative positioning for mic icon */
+        }
+
+        .chat-form input[type="text"] {
+            width: 65%; /* Adjusted width to accommodate mic icon */
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+            border: none;
+            background: transparent;
+            border-radius: 5px 0 0 5px;
+        }
+
+        .chat-form input[type="submit"] {
+            width: 15%;
+            padding: 10px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: var(--red);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-form input[type="submit"]:hover {
+            background-color: var(--lred);
+        }
+
+        .mic-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px; /* Adjust as needed */
+            transform: translateY(-50%);
+            color: #555; /* Adjust the color of the microphone icon */
+            cursor: pointer;
+        }
+        .mic-container {
+            margin-left: 10px;
+        }
+
+        .mic-container i {
+            color: #555;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/86aee6cc9c.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <section class="section InfoHub" id="home">
+        <h2>Information Hub</h2>
+        <p>Touch outside the chatbox to stop</p>
+        <div class="convos">
+            <div class="chat-container" id="chat-box">
+                <div class="message" >Hello! How can I help you?</div>
+            </div>
+        </div>
+        <form class="chat-form" id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <div class="mic-container" id="voice-icon">
+                <i class="fas fa-microphone"></i>
+            </div>
+            <input type="submit" value="Send">
+        </form>
+    </section>
+
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+        stopTextToSpeech(); // Stop speech synthesis
+        sendMessage(); // Call the sendMessage function
+    });
+
+    document.getElementById('user-input').addEventListener('keypress', function(event) {
+        if (event.keyCode === 13) { // 13 is the Enter key code
+            event.preventDefault(); // Prevent default behavior (e.g. submitting form)
+            stopTextToSpeech(); // Stop speech synthesis
+            sendMessage(); // Call the sendMessage function
+        }
+    });
+
+    document.getElementById('voice-icon').addEventListener('click', function() {
+        stopTextToSpeech(); // Stop speech synthesis
+        recognizeSpeech();
+    });
+
+    // Add event listeners to dynamically created mic icons
+    document.body.addEventListener('click', function(event) {
+        if (event.target.closest('.mic-container')) {
+            stopTextToSpeech(); // Stop speech synthesis
+            speakResponse(event.target.closest('.mic-container').getAttribute('data-response'));
+        }
+    });
+
+    document.body.addEventListener('click', stopTextToSpeechOutside);
+});
+
+function sendMessage() {
+    var userInput = document.getElementById('user-input').value;
+    var chatBox = document.getElementById('chat-box');
+    var chatMessageContainer = document.createElement('div');
+    chatMessageContainer.classList.add('chat-message-container');
+    var chatMessage = document.createElement('div');
+    chatMessage.classList.add('message');
+    chatMessage.textContent = 'You: ' + userInput;
+    chatMessageContainer.appendChild(chatMessage);
+    chatBox.appendChild(chatMessageContainer);
+
+    var formData = new FormData();
+    formData.append('user_input', userInput);
+
+    fetch('/chat', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        var botResponse = data.bot_response;
+        var chatMessage = document.createElement('div');
+        chatMessage.classList.add('message', 'user-message');
+        chatMessage.textContent = 'ChatBot: ' + botResponse;
+        var micContainer = document.createElement('div');
+        micContainer.classList.add('mic-container');
+        micContainer.setAttribute('data-response', botResponse);
+        var micIcon = document.createElement('i');
+        micIcon.classList.add('fas', 'fa-microphone');
+        micContainer.appendChild(micIcon);
+        chatMessageContainer = document.createElement('div');
+        chatMessageContainer.classList.add('chat-message-container');
+        chatMessageContainer.appendChild(chatMessage);
+        chatMessageContainer.appendChild(micContainer);
+        chatBox.appendChild(chatMessageContainer);
+    });
+
+    document.getElementById('user-input').value = '';
+}
+
+function recognizeSpeech() {
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+    
+    recognition.onresult = function(event) {
+        var transcript = event.results[0][0].transcript;
+        var currentInput = document.getElementById('user-input').value;
+        document.getElementById('user-input').value = currentInput + transcript;
+        // sendMessage(); // Call the sendMessage function with the recognized speech
+    };
+
+    recognition.start();
+}
+
+function speakResponse(response) {
+    var speechSynthesis = window.speechSynthesis;
+    var utterance = new SpeechSynthesisUtterance(response);
+    speechSynthesis.speak(utterance);
+}
+
+function stopTextToSpeech() {
+    var speechSynthesis = window.speechSynthesis;
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+        speechSynthesis.cancel();
+    }
+}
+
+function stopTextToSpeechOutside(event) {
+    // Check if the click occurred outside of chat elements
+    if (!event.target.closest('#chat-box') && !event.target.closest('#user-input')) {
+        stopTextToSpeech();
+    }
+}
+</script> -->
+</body>
+</html>
