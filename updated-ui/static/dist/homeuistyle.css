@@ -456,3 +456,8 @@ section h2 {
     color: #555;
     cursor: pointer;
 }
+
+
+i[role="buttoninput"]:active {
+  color: green;
+}
