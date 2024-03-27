@@ -254,7 +254,22 @@
     </div>    
   </form>  
 
-
+<!--mice checkcolor -->
+  <script>
+    document.getElementById('input-mic').addEventListener('click', function() {
+    var icon = this;
+    var input = document.getElementById('user-input');
+    
+    // Temporarily change the color to red on click
+    icon.style.color = 'green';
+    input.value = '';
+    // Set a timeout to revert the color after 2 seconds (2000 milliseconds)
+    setTimeout(function() {
+        icon.style.color = ''; // Reverts to the original color specified in CSS
+    }, 4000);
+    });
+  </script>
+  
   <!-- Chatbot script -->
   <script>
     $(document).ready(function() {
@@ -324,25 +339,27 @@
     if (speechSynthesis.speaking || speechSynthesis.pending) {
         // If speech synthesis is in progress, stop it and revert the icon
         speechSynthesis.cancel();
-        $('.mic-container').html('<i class="fa-solid fa-volume-xmark"></i>'); // Reset all mic icons
+        $('.mic-container').html('<i class="fa-solid fa-volume-high"></i>'); // Reset all mic icons
     }
 
     if (micContainer.hasClass('speaking')) {
         // If the clicked icon was already speaking, revert it to the play icon
-        micContainer.removeClass('speaking');
-        micContainer.html('<i class="fa-solid fa-volume-xmark"></i>'); // Change mic icon to play
+        $('.mic-container').removeClass('speaking');
+            $('.mic-container').html('<i class="fa-solid fa-volume-high"></i>'); 
+            micContainer.html('<i class="fa-solid fa-volume-xmark" style="color: violet"></i>');
     } else {
-        // If the clicked icon was not speaking, start speech synthesis
-        var response = micContainer.data('response');
-        var utterance = new SpeechSynthesisUtterance(response);
-        utterance.onend = function() {
-            micContainer.removeClass('speaking');
-            micContainer.html('<i class="fa-solid fa-volume-high"></i>'); // Change mic icon to pause when speech ends
-        };
-        speechSynthesis.speak(utterance); // Start speech synthesis
-        micContainer.addClass('speaking');
-        micContainer.html('<i class="fa-solid fa-volume-high"></i>'); // Change mic icon to pause
-    }
+            // If the clicked icon was not speaking, start speech synthesis
+          var response = micContainer.data('response');
+          var utterance = new SpeechSynthesisUtterance(response);
+          utterance.onend = function() {
+              micContainer.removeClass('speaking');
+              micContainer.html('<i class="fa-solid fa-volume-high"></i>'); // Change mic icon to pause when speech ends
+          };
+          speechSynthesis.speak(utterance); // Start speech synthesis
+          micContainer.addClass('speaking');
+          $('.mic-container').html('<i class="fa-solid fa-volume-high"></i>'); // Reset all mic icons
+          micContainer.html('<i class="fa-solid fa-play" style="color: green"></i>'); // Change mic icon to pause
+      }
 }
 
     
